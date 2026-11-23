@@ -343,6 +343,7 @@ private def expectedDeclarations : Array String := #[
   "Erlang.maps.«is_key/2»",
   "Erlang.maps.«iterator/1»",
   "Erlang.maps.«keys/1»",
+  "Erlang.maps.«map/2»",
   "Erlang.maps.«merge/2»",
   "Erlang.maps.«merge_with/3»",
   "Erlang.maps.«new/0»",

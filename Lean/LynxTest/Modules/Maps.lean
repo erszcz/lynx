@@ -31,6 +31,18 @@ private def two : Term := .integer 2
 private def floatOne : Term.FiniteFloat :=
   ⟨false, 1023, 0⟩
 
+theorem map_invalid_callback :
+    (Erlang.maps.«map/2» (Dispatcher.ofTable [] 0) (.atom "not_a_function") (.map []) :
+      Except Exception Term) = .error (.error (.atom "badarg")) := rfl
+
+theorem map_unmodeled_iterator :
+    (Erlang.maps.«map/2» (Dispatcher.ofTable [] 0) (.function "m" "f" 2 #[]) .nil :
+      Except Exception Term) = .error .exhausted := rfl
+
+theorem map_empty_iterator :
+    (Erlang.maps.«map/2» (Dispatcher.ofTable [] 0) (.function "m" "f" 2 #[]) (.atom "none") :
+      Except Exception Term) = .ok (.map []) := rfl
+
 theorem new_and_get :
     Erlang.maps.«new/0» = .ok (Term.map []) ∧
     Erlang.maps.«get/2» a (.map [(a, one)]) = .ok one := by

@@ -19,6 +19,7 @@
   "put/3": {"pure": true},
   "next/1": {"pure": true},
   "new/0": {"pure": true},
+  "map/2": {"pure": false},
   "merge_with/3": {"pure": false},
   "merge/2": {"pure": true},
   "keys/1": {"pure": true},

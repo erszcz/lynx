@@ -145,6 +145,23 @@ dropping keys in only one of them. The order of the calls is unspecified. -/
   | .function _ _ 3 _, _, _ => throw (.error (.tuple #[.atom "badmap", left]))
   | _, _, _ => throw (.error (.atom "badarg"))
 
+/-- Apply `Fun(Key, Value)` once to each binding. The order of calls is unspecified. -/
+@[expose] def «map/2» {m : Type → Type u} [Monad m] [MonadExceptOf Exception m] [Dispatch m]
+    (dispatcher : Dispatcher) (function input : Term) : m Term :=
+  let applyPairs (pairs : List (Term × Term)) : m Term := do
+    let mapped ← pairs.mapM fun entry => do
+      let value ← Dispatch.dispatch dispatcher function #[entry.1, entry.2]
+      pure (entry.1, value)
+    pure (.map mapped)
+  match function with
+  | .function _ _ 2 _ =>
+    match input with
+    | .map entries => applyPairs (Term.mapEntries entries)
+    | .atom "none" => pure (.map [])
+    -- Iterator representations and malformed inputs are not modeled here.
+    | _ => throw .exhausted
+  | _ => throw (.error (.atom "badarg"))
+
 /-- Keep the bindings for which `Pred(Key, Value)` returns `true`. Maps and the
 iterators of `iterator/1` are filtered in the order `to_list/1` returns them. -/
 @[expose] def «filter/2» {m : Type → Type u} [Monad m] [MonadExceptOf Exception m] [Dispatch m]
